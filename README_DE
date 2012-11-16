@@ -1,0 +1,177 @@
+#### In dieser Anleitung wird  beschrieben, wie Sie die Templates anpassen als Lieferadresse eine Packstation angeben zu können. ####
+
+Bitte befolgen Sie alle Schritte genau, ansonsten schlägt die Anpassung fehl fehl.
+
+Wenn Sie keine Änderungen in den originalen Templates vorgenommen haben, genüg es, wenn Sie die Templates in das entprechende Verzeichnis kopieren (siehe unten).
+Danach kopieren Sie auf jeden Fall die Datei "packstation.js" in das Verzeichnis \out\basic\src. 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Folgende Templates müssen angepasst werden:
+
+in \out\basic\tpl
+account_user.tpl
+register.tpl
+user.tpl
+
+in \out\admin\tpl
+user_address.tpl
+order_address.tpl
+
+außerdem \out\basic\de\lang.php
+und \out\admin\de\lang.php
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+account_user.tpl :
+
+1) Zunächst fügen an den Anfang des Templates die Zeile 
+    <script src="[{ $oViewConf->getResourceUrl() }]packstation.js" type="text/javascript" ></script> ein. 
+
+2) Fügen Sie zwischen der Zeile die Adressen und der Anrede folgende Zeilen ein:
+      <td><label>[{ oxmultilang ident="USER_PACKSTATIONADDRESS" }]</label></td>
+           <td><input type="checkbox" [{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}] checked [{/if}] name="chkpack" onchange="packstation()">
+           </td>
+           </tr>
+           <tr>
+		   
+3) Ersetzen Sie <td><label>[{ oxmultilang ident="ACCOUNT_USER_STREETANDSTREETNO2" }]</label></td> durch 
+   <td><input style="border: none; font-size: 11px;" type="text" size="40" name="packnr" readonly="readonly" value="[{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="USER_PACKSTATIONNR2"}] [{else}][{ oxmultilang ident="USER_STREET2"}][{/if}]"  > 
+
+4) Ändern Sie in <input type="text" size="28" maxlength="255" name="deladr[oxaddress__oxstreet]" value="[{if $delivadr->oxaddress__oxstreet->value }][{ $delivadr->oxaddress__oxstreet->value }][{elseif $deladr.oxaddress__oxstreet }][{ $deladr.oxaddress__oxstreet }][{/if }]"> 
+   in <input id="packstr" type="text" size="28" maxlength="255" onchange="if(this.value == ' '){this.form.chkpack.checked = false;}" name="deladr[oxaddress__oxstreet]" value="[{if $delivadr->oxaddress__oxstreet->value }][{ $delivadr->oxaddress__oxstreet->value }][{elseif $deladr.oxaddress__oxstreet }][{ $deladr.oxaddress__oxstreet }][{/if }]"> um
+
+5) Ersetzen Sie <td><label>[{ oxmultilang ident="ACCOUNT_USER_ADDITIONALINFO2" }]</label></td> durch 
+   <td><input style="border: none; font-size: 11px;" type="text" name="postnr" readonly="readonly" value="[{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="USER_POSTNR2"}] [{else}][{ oxmultilang ident="USER_ADDITIONALINFO2"}][{/if}]"></td>
+
+6) Ändern Sie <select name="deladr[oxaddress__oxcountryid]">
+   in <select id="countryoption" [{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}] disabled style="display: none;" [{else}] style="display: inline;"[{/if}] name="deladr[oxaddress__oxcountryid]">  
+   
+7) Fügen Sie direkt nach dem Drop-Down-Menü (nach </select>) folgende Zeile ein:
+	<input type="text" [{if $delivadr->oxaddress__oxstreet->value != 'Packstation'}]disabled style="display: none;"[{/if}] id="optvalue" name="deladr[oxaddress__oxcountryid]" value="Deutschland" readonly>  
+     
+somit ist account_user.tpl angepasst.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+register.tpl :
+
+1) Zunächst fügen an den Anfang des Templates die Zeile 
+    <script src="[{ $oViewConf->getResourceUrl() }]packstation.js" type="text/javascript" ></script> ein. 
+
+2) Fügen Sie zwischen der Zeile die Adressen und der Anrede folgende Zeilen ein:
+      <td><label>[{ oxmultilang ident="USER_PACKSTATIONADDRESS" }]</label></td>
+           <td><input type="checkbox" [{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}] checked [{/if}] name="chkpack" onchange="packstation()">
+           </td>
+           </tr>
+           <tr>
+		   
+3) Ersetzen Sie <td><label>[{ oxmultilang ident="REGISTER_STREET2" }]</label></td> durch 
+   <td><input style="border: none; font-size: 11px;" type="text" size="40" name="packnr" readonly="readonly" value="[{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="USER_PACKSTATIONNR2"}] [{else}][{ oxmultilang ident="USER_STREET2"}][{/if}]"  >
+
+4) Ändern Sie <input type="text" size="28" maxlength="255" name="deladr[oxaddress__oxstreet]" value="[{if $delivadr->oxaddress__oxstreet->value}][{$delivadr->oxaddress__oxstreet->value}][{else}][{$deladr.oxaddress__oxstreet}][{/if}]">
+   in <input id="packstr" type="text" size="28" maxlength="255" name="deladr[oxaddress__oxstreet]" value="[{if $delivadr->oxaddress__oxstreet->value}][{$delivadr->oxaddress__oxstreet->value}][{else}][{$deladr.oxaddress__oxstreet}][{/if}]"> um
+
+5) Ersetzen Sie <td><label>[{ oxmultilang ident="REGISTER_ADDITIONALINFO2" }]</label></td> durch 
+   <td><input style="border: none; font-size: 11px;" type="text" name="postnr" readonly="readonly" value="[{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="USER_POSTNR2"}] [{else}][{ oxmultilang ident="USER_ADDITIONALINFO2"}][{/if}]"></td>
+
+6) Ändern Sie <select name="deladr[oxaddress__oxcountryid]" >
+   in <select id="countryoption" style="display: inline;" name="deladr[oxaddress__oxcountryid]" >
+   
+7) Fügen Sie direkt nach dem Drop-Down-Menü (nach </select>) folgende Zeile ein:
+	<input disabled type="text" style="display: none;" id="optvalue" name="deladr[oxaddress__oxcountryid]" value="Deutschland" readonly> 
+	
+	somit ist register.tpl angepasst.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+user.tpl :
+
+1) Zunächst fügen an den Anfang des Templates die Zeile 
+    <script src="[{ $oViewConf->getResourceUrl() }]packstation.js" type="text/javascript" ></script> ein. 
+
+2) Fügen Sie zwischen der Zeile die Adressen und der Anrede folgende Zeilen ein:
+      <td><label>[{ oxmultilang ident="USER_PACKSTATIONADDRESS" }]</label></td>
+           <td><input type="checkbox" [{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}] checked [{/if}] name="chkpack" onchange="packstation()">
+           </td>
+           </tr>
+           <tr>
+		   
+3) Ersetzen Sie <td><label>[{ oxmultilang ident="USER_STREET2" }]</label></td> durch 
+   <td><input style="border: none; font-size: 11px;" type="text" size="40" name="packnr" readonly="readonly" value="[{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="USER_PACKSTATIONNR2"}] [{else}][{ oxmultilang ident="USER_STREET2"}][{/if}]"  > 
+
+4) Ändern Sie in <input type="text" size="28" maxlength="255" name="deladr[oxaddress__oxstreet]" value="[{if $delivadr->oxaddress__oxstreet->value }][{ $delivadr->oxaddress__oxstreet->value }][{elseif $deladr.oxaddress__oxstreet }][{ $deladr.oxaddress__oxstreet }][{/if }]"> 
+   in <input id="packstr" type="text" size="28" maxlength="255" onchange="if(this.value == ' '){this.form.chkpack.checked = false;}" name="deladr[oxaddress__oxstreet]" value="[{if $delivadr->oxaddress__oxstreet->value }][{ $delivadr->oxaddress__oxstreet->value }][{elseif $deladr.oxaddress__oxstreet }][{ $deladr.oxaddress__oxstreet }][{/if }]"> um
+
+5) Ersetzen Sie <td><label>[{ oxmultilang ident="USER_ADDITIONALINFO2" }]</label></td> durch 
+   <td><input style="border: none; font-size: 11px;" type="text" name="postnr" readonly="readonly" value="[{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="USER_POSTNR2"}] [{else}][{ oxmultilang ident="USER_ADDITIONALINFO2"}][{/if}]"></td>
+
+6) Ändern Sie <select name="deladr[oxaddress__oxcountryid]">
+   in <select id="countryoption" [{if $delivadr->oxaddress__oxstreet->value == 'Packstation'}] disabled style="display: none;" [{else}] style="display: inline;"[{/if}] name="deladr[oxaddress__oxcountryid]">  
+   
+7) Fügen Sie direkt nach dem Drop-Down-Menü (nach </select>) folgende Zeile ein:
+	<input type="text" [{if $delivadr->oxaddress__oxstreet->value != 'Packstation'}]disabled style="display: none;"[{/if}] id="optvalue" name="deladr[oxaddress__oxcountryid]" value="Deutschland" readonly>  
+	
+	somit ist user.tpl angepasst.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+user_address.tpl
+
+1) Ersetzen Sie in Zeile 82
+
+   [{ oxmultilang ident="GENERAL_STREETNUM" }]
+   
+   durch 
+   
+   [{if $edit->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="GENERAL_PACKNR" }] [{else}][{ oxmultilang ident="GENERAL_STREETNUM" }][{/if}]
+   
+2) Ersetzen Sie in Zeile 99
+
+  [{ oxmultilang ident="GENERAL_EXTRAINFO" }]
+   
+   durch 
+   
+   [{if $edit->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="GENERAL_POSTNR" }][{else}][{ oxmultilang ident="GENERAL_EXTRAINFO" }][{/if}]  
+
+   somit ist user_address.tpl angepasst.
+   
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+order_address.tpl
+
+1) Ersetzen Sie in Zeile 297
+
+   [{ oxmultilang ident="GENERAL_STREETNUM" }]
+   
+   durch 
+   
+   [{if $edit->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="GENERAL_PACKNR" }] [{else}][{ oxmultilang ident="GENERAL_STREETNUM" }][{/if}]
+   
+2) Ersetzen Sie in Zeile 214
+
+  [{ oxmultilang ident="GENERAL_EXTRAINFO" }]
+   
+   durch 
+   
+   [{if $edit->oxaddress__oxstreet->value == 'Packstation'}][{ oxmultilang ident="GENERAL_POSTNR" }][{else}][{ oxmultilang ident="GENERAL_EXTRAINFO" }][{/if}]  
+
+   somit ist order_address.tpl angepasst.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\basic\de\lang.php 
+
+  Fügen Sie in das Array folgende Sprach-Konstanten ein:
+  
+  'REGISTER_PACKSTATION'     => "Adresse einer Packstation",
+  'REGISTER_POSTNR2'         => "PostNummer",
+  'REGISTER_PACKSTATION2'    => "Packstation, Packstationsnummer",
+  'REGISTER_PACKSTANR2'      => "Nummer der Packstation", 
+  'USER_PACKSTATION'         => "Adresse einer Packstation",
+  'USER_PACKSTATIONADDRESS'  => "Packstation",
+  'USER_PACKSTATIONNR2'      => "Packstationsnummer:",
+  'USER_POSTNR2'             => "PostNummer:",
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+\admin\de\lang.php
+
+  Fügen Sie in das Array folgende Sprach-Konstanten ein:  	
+  
+  'GENERAL_POSTNR'           => 'PostNr',
+  'GENERAL_PACKNR'           => 'Packst., Nr.',
+  
+ 		
